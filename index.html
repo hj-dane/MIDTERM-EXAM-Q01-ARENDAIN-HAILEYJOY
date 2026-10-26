@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="style.css">
+    <title>Maintenance Request System</title>
+</head>
+<body>
+    <div class=""app>
+        <h1>MAINTENANCE REQUEST SYSTEM</h1>
+        <h2>Add Request</h2>
+
+        <form id="addForm" novalidate>
+            <input type="text" id="requester" placeholder="Full Name" required>
+            <input type="text" id="location" placeholder="Address" required>
+            <input type="text" id="problem" placeholder="Problem" required>
+            <label for="priority">Choose priority:</label>
+            <select id="priority" name="priority" required>
+                <option value="" selected disabled>Choose a priority</option>
+                <option value="high">High</option>
+                <option value="medium">Medium</option>
+                <option value="low">Low</option>
+            </select>
+            <button type="submit">Add Request</button>
+        </form>
+        <div id="formMsg"></div>
+
+        <h2>REQUESTS</h2>
+        <button id="loadBtn" onclick="loadRequests()">Load Requests</button>
+
+        <table>
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Requester</th>
+                    <th>Location</th>
+                    <th>Problem</th>
+                    <th>Priority</th>
+                    <th>Status</th>
+                </tr>
+            </thead>
+            <tbody id="requestBody"></tbody>
+        </table>
+
+    </div>
+    <script>
+
+        async function loadRequests() {
+            const response = await fetch("api/requests");
+            const requests = await response.json();
+
+            const tbody = document.getElementById("requestBody");
+            tbody.innerHTML = "";
+
+            requests.forEach(request => {
+                tbody.innerHTML += `
+                    <tr>
+                        <td>${request.id}</td>
+                        <td>${request.requester}</td>
+                        <td>${request.location}</td>
+                        <td>${request.problem}</td>
+                        <td>${request.priority}</td>    
+                        <td>${request.status}</td>
+                    </tr>
+                `;
+            });
+        }
+
+        loadRequests();
+
+        document.getElementById("addForm").addEventListener("submit", async (event) => {
+            event.preventDefault();
+
+            const requester = document.getElementById("requester").value.trim();
+            const location = document.getElementById("location").value.trim();
+            const problem = document.getElementById("problem").value.trim();
+            const priority = document.getElementById("priority").value.trim();
+
+            const msg = document.getElementById("formMsg");
+
+            const response = await fetch("api/requests", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ requester, location, problem, priority })
+            });
+
+            const data = await response.json();
+
+            if (!response.ok) {
+                msg.textContent = data.message;
+                msg.className = "error";
+                return;
+            }
+
+            msg.textContent = "Request added successfully";
+            msg.className = "success";
+
+            document.getElementById("addForm").reset();
+            loadRequests();
+        });
+
+        async function deleteRequest(id) {
+             if (!confirm("Delete this request?")) return;
+
+            await fetch(`/api/requests/${id}`, { method: "DELETE" });
+
+            loadRequests();
+        }
+
+    </script>
+</body>
+</html>

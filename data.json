@@ -1,0 +1,26 @@
+[
+    {
+        "id": 1,
+        "requester": "Carmela Suico",
+        "location": "Jagobiao, Cebu City",
+        "problem": "Exposed wirings",
+        "priority": "High",
+        "status": "Pending"
+    },
+    {
+        "id": 2,
+        "requester": "Martin Pavillar",
+        "location": "Banilad, Cebu City",
+        "problem": "Clogged drainage",
+        "priority": "Medium",
+        "status": "Done"
+    },
+    {
+        "id": 3,
+        "requester": "Joseph De Pedro",
+        "location": "Lahug, Cebu City",
+        "problem": "Leaking pipes",
+        "priority": "High",
+        "status": "Pending"
+    }
+]
